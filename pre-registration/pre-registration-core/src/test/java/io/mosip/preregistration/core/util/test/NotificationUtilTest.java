@@ -102,7 +102,7 @@ public class NotificationUtilTest {
 		notificationDTO.setIsBatch(false);
 		notificationDTO.setRegistrationCenterName(regCenterName);
 		notificationDTO.setAddress(regCenterAddress);
-		notificationDTO.setFullName(languageNamePairs);
+		notificationDTO.setSurname(languageNamePairs);
 		notificationDTO.setRegistrationCenterName(languageNamePairs);
 		notificationDTO.setAddress(languageNamePairs);
 		responseDTO = new MainResponseDTO<>();

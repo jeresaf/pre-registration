@@ -126,8 +126,7 @@ public class TemplateUtil {
 		ZoneId countryZoneId = ZoneId.of(timeZone);
 		ZonedDateTime nowCountryTime = ZonedDateTime.ofInstant(nowUtc, countryZoneId);
 
-		responseMap.put("name", acknowledgementDTO.getFullName().stream().filter(name -> name.getKey().equals(langCode))
-				.map(name -> name.getValue()).collect(Collectors.toList()).get(0));
+		responseMap.put("name", acknowledgementDTO.getSurname().get(0).getValue() + " " + (acknowledgementDTO.getOtherNames() == null || acknowledgementDTO.getOtherNames().isEmpty() ? "" : acknowledgementDTO.getOtherNames()));
 		responseMap.put("PRID", acknowledgementDTO.getPreRegistrationId());
 		responseMap.put("Date", dateFormate.format(now));
 		responseMap.put("Time", timeFormate.format(nowCountryTime));

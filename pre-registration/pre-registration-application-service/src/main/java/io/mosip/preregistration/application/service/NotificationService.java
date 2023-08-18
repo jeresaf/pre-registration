@@ -117,7 +117,7 @@ public class NotificationService {
 	private String email;
 
 	@Value("${preregistration.identity.name}")
-	private String fullName;
+	private String surname;
 
 	@Value("${preregistration.identity.phone}")
 	private String phone;
@@ -264,8 +264,8 @@ public class NotificationService {
 					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 			responseNode = responseNode.get(identity);
-			
-			JsonNode arrayNode = responseNode.get(fullName);
+
+			JsonNode arrayNode = responseNode.get(surname);
 			List<KeyValuePairDto<String,String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 			KeyValuePairDto langaueNamePair = null;
 			if (arrayNode.isArray()) {
@@ -277,7 +277,7 @@ public class NotificationService {
 				}
 			}
 
-			notificationDto.setFullName(langaueNamePairs);
+			notificationDto.setSurname(langaueNamePairs);
 			if (responseNode.get(email) != null) {
 				String emailId = responseNode.get(email).asText();
 				notificationDto.setEmailID(emailId);
@@ -401,7 +401,7 @@ public class NotificationService {
 				for (int i = 0; i < nameKeys.length; i++) {
 					JsonNode arrayNode = responseNode.get(nameKeys[i]);
 					for (JsonNode jsonNode : arrayNode) {
-						if (notificationDto.getName().trim().equals(jsonNode.get("value").asText().trim())) {
+						if (notificationDto.getName().trim().contains(jsonNode.get("value").asText().trim())) {
 							isNameMatchFound = true;
 							break;
 						}

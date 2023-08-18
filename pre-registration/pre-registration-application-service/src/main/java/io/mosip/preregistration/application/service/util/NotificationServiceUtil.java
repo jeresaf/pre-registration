@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +127,14 @@ public class NotificationServiceUtil {
 		MainRequestDTO<NotificationDTO> notificationReqDto = new MainRequestDTO<>();
 		JSONObject notificationData = new JSONObject(jsonString);
 		JSONObject notificationDtoData = (JSONObject) notificationData.get("request");
+
+		String surnameData = (String) ((JSONObject) notificationDtoData.get("eng")).get("surname");
+		JSONObject newSurnameData = new JSONObject();
+		newSurnameData.put("key", "eng");
+		newSurnameData.put("value", surnameData);
+		((JSONObject)  notificationDtoData.get("eng")).put("surname", (new JSONArray()).put(newSurnameData));
+		System.out.println("In createUploadDto method of notification service util updated json string " + notificationDtoData);
+
 		NotificationDTO notificationDto = null;
 		List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 		if (isLatest) {
@@ -139,7 +148,7 @@ public class NotificationServiceUtil {
 				langaueNamePairs.add(langaueNamePair);
 			}
 			if (notificationDto != null) {
-				notificationDto.setFullName(langaueNamePairs);
+				notificationDto.setSurname(langaueNamePairs);
 				notificationDto.setLanguageCode(langauageCode);
 			}
 		}
@@ -150,7 +159,7 @@ public class NotificationServiceUtil {
 			langaueNamePair.setKey(langauageCode);
 			langaueNamePair.setValue(notificationDto.getName());
 			langaueNamePairs.add(langaueNamePair);
-			notificationDto.setFullName(langaueNamePairs);
+			notificationDto.setSurname(langaueNamePairs);
 			notificationDto.setLanguageCode(langauageCode);
 		}
 
@@ -201,7 +210,7 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public void invokeEmailNotification(Map values, String userId, 
+	public void invokeEmailNotification(Map values, String userId,
 			MainRequestDTO<OtpRequestDTO> requestDTO, String langCode) throws PreRegLoginException, IOException {
 		log.info("sessionId", "idType", "id", "In invokeEmailNotification method of notification service util");
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
@@ -218,7 +227,7 @@ public class NotificationServiceUtil {
 	 * @param message              the message
 	 * @throws PreRegLoginException
 	 */
-	public void sendSmsNotification(String notificationMobileNo, String message, MainRequestDTO<OtpRequestDTO> requestDTO) 
+	public void sendSmsNotification(String notificationMobileNo, String message, MainRequestDTO<OtpRequestDTO> requestDTO)
 		throws PreRegLoginException {
 		try {
 			PreRegSmsRequestDto preRegSmsRequestDto = new PreRegSmsRequestDto();
@@ -258,7 +267,7 @@ public class NotificationServiceUtil {
 	 * @param mailContent the mail content
 	 * @throws PreRegLoginException
 	 */
-	public void sendEmailNotification(String emailId, String mailSubject, String mailContent, 
+	public void sendEmailNotification(String emailId, String mailSubject, String mailContent,
 			MainRequestDTO<OtpRequestDTO> requestDTO) throws PreRegLoginException {
 		try {
 			PreRegMailRequestDto mailRequestDto = new PreRegMailRequestDto();
@@ -394,20 +403,20 @@ public class NotificationServiceUtil {
 				address = new ArrayList<>();
 				String firstRegCenterLangCode = null;
 				Map<String, RegistrationCenterDto> regCentersMap = new HashMap<String, RegistrationCenterDto>();
-				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+				for (KeyValuePairDto<String, String> key : notificationDto.getSurname()) {
 					String regCenterLangCode = (String) key.getKey();
 					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
 							regCenterLangCode);
 					if (centerDto != null) {
 						if (firstRegCenterLangCode == null) {
-							firstRegCenterLangCode = regCenterLangCode;	
+							firstRegCenterLangCode = regCenterLangCode;
 						}
 						regCentersMap.put(regCenterLangCode, centerDto);
 					} else {
 						centerDto = getNotificationCenterAddressDTO(registrationCenterId,
 								"all");
 						if (firstRegCenterLangCode == null) {
-							firstRegCenterLangCode = regCenterLangCode;	
+							firstRegCenterLangCode = regCenterLangCode;
 						}
 						regCentersMap.put(regCenterLangCode, centerDto);
 					}
@@ -416,7 +425,7 @@ public class NotificationServiceUtil {
 				if (regCentersMap.size() > 0) {
 					defaultCenterDto = regCentersMap.get(firstRegCenterLangCode);
 				}
-				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+				for (KeyValuePairDto<String, String> key : notificationDto.getSurname()) {
 					String regCenterLangCode = (String) key.getKey();
 					if (!regCentersMap.containsKey(regCenterLangCode)) {
 						regCentersMap.put(regCenterLangCode, defaultCenterDto);
@@ -432,9 +441,9 @@ public class NotificationServiceUtil {
 					sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
 					regCenterDetailsAddress.setValue(sb.toString());
 					address.add(regCenterDetailsAddress);
-				}	
-				
-//				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+				}
+
+//				for (KeyValuePairDto<String, String> key : notificationDto.getSurname()) {
 //					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
 //							(String) key.getKey());
 //					System.out.println("NotificationCenterDTO: " + centerDto);

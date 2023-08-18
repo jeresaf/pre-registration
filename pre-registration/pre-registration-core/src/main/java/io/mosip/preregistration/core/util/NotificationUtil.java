@@ -117,7 +117,7 @@ public class NotificationUtil {
 		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		String mergeTemplate = null;
-		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getSurname()) {
 			if (acknowledgementDTO.getIsBatch()) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
 //				fileText.concat(System.lineSeparator() + System.lineSeparator());
@@ -176,8 +176,8 @@ public class NotificationUtil {
 	public String getEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
 		String emailSubject = "";
-		int noOfLang = acknowledgementDTO.getFullName().size();
-		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+		int noOfLang = acknowledgementDTO.getSurname().size();
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getSurname()) {
 			emailSubject = emailSubject + templateUtil.templateMerge(
 					templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgementSubject), acknowledgementDTO,
 					(String) keyValuePair.getKey());
@@ -199,8 +199,8 @@ public class NotificationUtil {
 	public String getCancelAppointmentEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionID", "idType", "id", "In getEmailCancelAppointmentSubject of NotificationUtilService");
 		String emailSubjectCancelAppointment = "";
-		int noOfLang = acknowledgementDTO.getFullName().size();
-		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+		int noOfLang = acknowledgementDTO.getSurname().size();
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getSurname()) {
 			emailSubjectCancelAppointment = emailSubjectCancelAppointment + templateUtil.templateMerge(
 					templateUtil.getTemplate(keyValuePair.getKey(), cancelAppointmentEmailSubject), acknowledgementDTO,
 					(String) keyValuePair.getKey());
@@ -225,7 +225,7 @@ public class NotificationUtil {
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		String mergeTemplate = null;
-		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getSurname()) {
 			String languageWiseTemplate = null;
 			if (acknowledgementDTO.getIsBatch()) {
 				languageWiseTemplate = templateUtil.templateMerge(
